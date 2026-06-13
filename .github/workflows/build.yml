@@ -1,26 +1,28 @@
-name: Build PulseOS
+name: PulseOS Build Cloud
 
 on:
   workflow_dispatch:
 
 jobs:
-  build:
+  build-iso:
     runs-on: ubuntu-latest
-
-    container:
-      image: archlinux:latest
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-      - name: Install archiso
+      - name: Install dependencies
         run: |
-          pacman -Syu --noconfirm
-          pacman -S --noconfirm archiso
+          sudo apt-get update
+          sudo apt-get install -y arch-install-scripts
 
-      - name: Build ISO
+      - name: Run mkarchiso via Docker (Privileged)
         run: |
-          mkarchiso -v -w work -o out .
+          # Мы запускаем Arch Linux внутри привилегированного докера, 
+          # чтобы у него были права на mount и chroot.
+          docker run --privileged -v $(pwd):/workspace -w /workspace archlinux:latest bash -c "
+            pacman -Syu --noconfirm archiso &&
+            mkarchiso -v -w /tmp/work -o /workspace/out /workspace
+          "
 
       - name: Upload ISO
         uses: actions/upload-artifact@v4
