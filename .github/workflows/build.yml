@@ -5,7 +5,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: macos-15-intel-latest
 
     container:
       image: archlinux:latest
@@ -20,7 +20,7 @@ jobs:
 
       - name: Build ISO
         run: |
-          sudo mkarchiso -v -w work -o out .
+          mkarchiso -v -w work -o out .
 
       - name: Upload ISO
         uses: actions/upload-artifact@v4
