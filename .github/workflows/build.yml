@@ -1,0 +1,29 @@
+name: Build PulseOS
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    container:
+      image: archlinux:latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install archiso
+        run: |
+          pacman -Syu --noconfirm
+          pacman -S --noconfirm archiso
+
+      - name: Build ISO
+        run: |
+          mkarchiso -v -w work -o out .
+
+      - name: Upload ISO
+        uses: actions/upload-artifact@v4
+        with:
+          name: PulseOS-ISO
+          path: out/*.iso
