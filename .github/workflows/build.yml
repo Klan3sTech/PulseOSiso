@@ -20,7 +20,7 @@ jobs:
 
       - name: Build ISO
         run: |
-          mkarchiso -v -w work -o out .
+          sudo mkarchiso -v -w work -o out .
 
       - name: Upload ISO
         uses: actions/upload-artifact@v4
